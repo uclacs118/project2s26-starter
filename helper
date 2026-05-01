@@ -28,7 +28,7 @@ function ensure_container() {
     CONTAINER_ID=$(docker ps -a -q --filter "name=project2_instance")
     if [ -z "$CONTAINER_ID" ]; then
         echo "No existing container found. Creating a new one..."
-        docker create --name project2_instance --cap-add=SYS_PTRACE --security-opt seccomp=unconfined -v $(pwd)/project:/autograder/submission -v $(pwd)/results:/autograder/results --entrypoint tail "$NAME" -f /dev/null
+        docker create --name project2_instance --cap-add=SYS_PTRACE --security-opt seccomp=unconfined -v $(pwd)/src:/autograder/submission -v $(pwd)/results:/autograder/results --entrypoint tail "$NAME" -f /dev/null
         CONTAINER_ID=$(docker ps -a -q --filter "name=project2_instance")
     fi
 
@@ -166,10 +166,10 @@ case "$1" in
         clean_project
         ;;
     zip)
-        cd project
+        cd src
         make clean
         cd ..
-        zip project.zip project/*
+        zip project.zip src/*
         ;;
     compile)
         compile
