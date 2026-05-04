@@ -29,7 +29,7 @@ function ensure_container() {
 
     docker rm -f project2_instance 2>/dev/null
     echo "Creating container with fresh mounts..."
-    docker create --name project2_instance --cap-add=SYS_PTRACE --security-opt seccomp=unconfined -u 1000:1000 -v $(pwd)/src:/autograder/submission -v $(pwd)/results:/autograder/results --entrypoint tail "$NAME" -f /dev/null
+    docker create --name project2_instance --cap-add=SYS_PTRACE --security-opt seccomp=unconfined -u 0 -v $(pwd)/src:/autograder/submission -v $(pwd)/results:/autograder/results --entrypoint tail "$NAME" -f /dev/null
     CONTAINER_ID=$(docker ps -a -q --filter "name=project2_instance")
     docker start "$CONTAINER_ID"
 
