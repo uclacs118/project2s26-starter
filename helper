@@ -24,21 +24,13 @@ function ensure_container() {
         docker rm -f project2_instance
     fi
 
-    # Check if a container exists
-    CONTAINER_ID=$(docker ps -a -q --filter "name=project2_instance")
-    if [ -z "$CONTAINER_ID" ]; then
-        echo "No existing container found. Creating a new one..."
-        docker create --name project2_instance --cap-add=SYS_PTRACE --security-opt seccomp=unconfined -u 1000:1000 -v $(pwd)/src:/autograder/submission -v $(pwd)/results:/autograder/results --entrypoint tail "$NAME" -f /dev/null
-        CONTAINER_ID=$(docker ps -a -q --filter "name=project2_instance")
-    fi
+    mkdir -p results && chmod 777 results
 
-    # Check if the container is running
-    if [ -z $(docker ps -q --filter "name=project2_instance" --filter "status=running") ]; then
-        echo "Starting the container..."
-        docker start "$CONTAINER_ID"
-    else
-        echo "Container is already running."
-    fi
+    docker rm -f project2_instance 2>/dev/null
+    echo "Creating container with fresh mounts..."
+    docker create --name project2_instance --cap-add=SYS_PTRACE --security-opt seccomp=unconfined -u 1000:1000 -v $(pwd)/src:/autograder/submission -v $(pwd)/results:/autograder/results --entrypoint tail "$NAME" -f /dev/null
+    CONTAINER_ID=$(docker ps -a -q --filter "name=project2_instance")
+    docker start "$CONTAINER_ID"
 
     echo "Using container: $CONTAINER_ID"
     export CONTAINER_ID
