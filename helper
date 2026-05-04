@@ -24,7 +24,8 @@ function ensure_container() {
         docker rm -f project2_instance
     fi
 
-    mkdir -p results && chmod 777 results
+    mkdir -p results
+    chmod 777 results
 
     docker rm -f project2_instance 2>/dev/null
     echo "Creating container with fresh mounts..."
